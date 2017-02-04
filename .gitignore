@@ -1,0 +1,15 @@
+/node_modules
+
+/public/storage
+/public/node_modules
+/public/css/app*
+/public/js/app*
+/public/js/system*
+/public/hot
+
+/storage/*.key
+/vendor
+/.idea
+Homestead.json
+Homestead.yaml
+.env
