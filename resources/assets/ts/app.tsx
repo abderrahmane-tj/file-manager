@@ -14,33 +14,27 @@ export class App extends React.Component<props,state>{
     this.state = {
       params: {}
     };
-    this.onClick = this.onClick.bind(this);
   }
   componentDidMount(){
     this.setState({params:this.props.params});
+    console.log(this.props);
   }
   componentWillReceiveProps(props:props){
     this.setState({params:props.params});
-  }
-  onClick(event){
-    event.preventDefault();
-    browserHistory.push(event.target.href);
+    console.log(props);
   }
   render(){
     const {params} =  this.state;
     return (
       <div id="app">
         <h1>File Manager</h1>
-        <p>to the rescue</p>
+        <p>to the rescue <span className="glyphicon glyphicon-cloud"></span></p>
         <pre>
           you are here : {JSON.stringify(params)}
         </pre>
-        <div><Link to="/static" className="list-group-item">Static</Link> </div>
-        <div>
-          <a
-            href="/dynamic" className="list-group-item"
-            onClick={this.onClick}
-          >Dynamic</a> </div>
+        <div><Link to="/static1" className="list-group-item">Static</Link> </div>
+        <div><Link to="/static3" className="list-group-item">Static</Link> </div>
+        <div><Link to="/static2" className="list-group-item">Static</Link> </div>
       </div>
     )
   }

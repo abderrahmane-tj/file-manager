@@ -13,10 +13,10 @@ const tsProject = ts.createProject('tsconfig.json');
 
 gulp.task('build-scss', function () {
   return gulp.src('resources/assets/sass/app.scss')
-    .pipe(sourcemaps.init())
-    .pipe(sass({}).on('error', sass.logError))
+    // .pipe(sourcemaps.init())
+    .pipe(sass({}).on('error', swallowError))
     .pipe(concat('app.css'))
-    .pipe(sourcemaps.write('.'))
+    // .pipe(sourcemaps.write('.'))
     // .pipe(autoprefixer({
     //   browsers: ['last 3 versions'],
     //   cascade: false
@@ -102,6 +102,9 @@ gulp.task('default', function (cb) {
   runSequence('build','watch',cb);
 });
 /// LAZY DEV SECTION ///
+gulp.task('lazy-copy',function(cb){
+  runSequence('copy-node-modules','copy-bootstrap-fonts',cb);
+});
 gulp.task('copy-node-modules',function () {
   const folders = [
     "moment",
@@ -112,7 +115,11 @@ gulp.task('copy-node-modules',function () {
     "react",
   ].map(folder=>`./node_modules/${folder}/**/*`);
   return gulp.src(folders,{base:'./node_modules/'})
-  .pipe(gulp.dest("public/node_modules"))
+    .pipe(gulp.dest("public/node_modules"))
+});
+gulp.task('copy-bootstrap-fonts',function () {
+  return gulp.src('./node_modules/bootstrap-sass/assets/fonts/**/*')
+    .pipe(gulp.dest("public/fonts"))
 });
 ///   PRODUCTION    ///
 gulp.task('bundle-ts', function(cb) {
