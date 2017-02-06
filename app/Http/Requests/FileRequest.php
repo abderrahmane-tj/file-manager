@@ -24,7 +24,7 @@ class FileRequest extends FormRequest
     public function rules()
     {
         return [
-          "path"=>"required",
+          "id"=>"integer",
           "item"=>"file|required"
         ];
     }

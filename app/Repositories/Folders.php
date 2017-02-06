@@ -7,11 +7,15 @@ use App\Folder;
 use Illuminate\Support\Facades\DB;
 
 class Folders{
+  public function get($id){
+    if($id==null){
+      return $this->rootContent();
+    }
+    return Folder::with(['folders','files'])->find($id);
+  }
   public function pathContent($path){
     if($path == "/"){
-      $folders = Folder::whereNull('folder_id')->get();
-      $files = File::whereNull('folder_id')->get();
-      return compact('folders', 'files');
+      return $this->rootContent();
     }
     $id = $this->pathId($path);
     if($id>0){
@@ -49,5 +53,11 @@ class Folders{
     }else{
       return -1;
     }
+  }
+  private function rootContent(){
+    $folders = Folder::whereNull('folder_id')->get();
+    $files = File::whereNull('folder_id')->get();
+    $id = null;
+    return compact('id','folders', 'files');
   }
 }

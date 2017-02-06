@@ -17,9 +17,11 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/folder/{path?}', 'FoldersController@contents')
+Route::get('/folder/{id?}', 'FoldersController@contents');
+
+// get folder contents by guessing from path
+Route::get('/folder-from-path/{path?}', 'FoldersController@contentsFromPath')
   ->where(['path'=>'.*']);
 
-Route::get('/file/{path}', function($path){
-  return ["looking for item"];
-})->where(['path'=>'.*']);
+// get file details
+Route::get('/file/{id}', 'FilesController@details');

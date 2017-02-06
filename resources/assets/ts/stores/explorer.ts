@@ -1,11 +1,17 @@
 import {Http} from "../helpers/http";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 export class Explorer {
-  public path$ = new BehaviorSubject({});
+  public path$ = new BehaviorSubject("");
+  public folderId$ = new BehaviorSubject(null);
 
   // get folder contents
-  getContents(path:string){
-    return Http.get(`/folder${path}`);
+  getPathContent(path:string){
+    return Http.get(`/folder-from-path${path}`);
+  }
+  getContent(id:number){
+    let path = '/folder/';
+    if(id!==null){path =`/folder/${id}`}
+    return Http.get(path);
   }
   getItem(path:string, children = true){
     let prefix = "/" + (children ? "folder" : "");

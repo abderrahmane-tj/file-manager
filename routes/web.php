@@ -12,7 +12,7 @@
 */
 
 
-Route::post('/upload','FilesController@upload');
+Route::post('/upload/{id?}','FilesController@upload');
 
 Route::get('/{path}', function () {
   $csrf_token = csrf_token();
