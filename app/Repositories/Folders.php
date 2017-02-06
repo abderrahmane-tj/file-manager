@@ -15,7 +15,7 @@ class Folders{
     }
     $id = $this->pathId($path);
     if($id>0){
-      return Folder::with(['folders','files'])->find();
+      return Folder::with(['folders','files'])->find($id);
     }else{
       return []; // should raise error
     }
