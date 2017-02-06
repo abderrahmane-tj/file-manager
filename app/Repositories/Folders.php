@@ -14,20 +14,26 @@ class Folders{
     return Folder::with(['folders','files'])->find($id);
   }
   public function pathContent($path){
+    $root_content = $this->rootContent();
     if($path == "/"){
-      return $this->rootContent();
+      return [$root_content];
     }
-    $id = $this->pathId($path);
-    if($id>0){
-      return Folder::with(['folders','files'])->find($id);
-    }else{
+    $ids = $this->pathIds($path);
+
+    if($ids==null){
       return []; // should raise error
+    }else{
+      $path_cotents = Folder::with(['folders','files'])->whereIn('id',$ids)
+        ->orderByRaw(DB::raw("FIELD(id,".join(',',$ids).")"))
+        ->get();
+      $path_cotents->prepend($root_content);
+      return $path_cotents;
     }
 
   }
-  public function pathId($path){
+  public function pathIds($path){
     if($path == "/"){
-      return null;
+      return [];
     }
     if(starts_with($path,'/')){
       $path = substr($path,1);
@@ -43,15 +49,20 @@ class Folders{
         $join->where('f'.($i+1).'.name','=', $folders[$i]);
       });
     }
-    $result = $query->select('f'.($size).'.id')
+
+    $selection = [];
+    for($i=1;$i<=$size;$i++){
+      $selection[$i-1] = 'f'.($i).'.id as '.$i;
+    }
+    $result = $query->select($selection)
       ->whereNull('f1.folder_id')
       ->where('f1.name','=',$folders[0])
-      ->get();
+      ->first();
 
     if(sizeof($result)>0){
-      return $result[0]->id;
+      return collect($result)->values()->toArray();
     }else{
-      return -1;
+      return null;
     }
   }
   private function rootContent(){

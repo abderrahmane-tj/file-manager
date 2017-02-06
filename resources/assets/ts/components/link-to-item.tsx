@@ -5,7 +5,7 @@ import {explorer} from "../stores/explorer";
 interface state{
 }
 interface props{
-  to,id,title
+  to,id,title, className?
 }
 export class LinkToItem extends React.Component<props,state>{
   constructor(props){
@@ -18,13 +18,16 @@ export class LinkToItem extends React.Component<props,state>{
   }
   onClick(e){
     e.preventDefault();
-    explorer.folderId$.next(this.props.id);
     browserHistory.push(this.props.to);
+    if(explorer.folder$.getValue()!==this.props.id){
+      explorer.folderId$.next(this.props.id);
+    }
   }
   render(){
-    const {to,children,title} = this.props;
+    const {to,children,title,className} = this.props;
     return <a
       href={to} onClick={this.onClick} title={title}
+      className={className}
     >{children}</a>
   }
 }

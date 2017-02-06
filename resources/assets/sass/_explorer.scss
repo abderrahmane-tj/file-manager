@@ -2,8 +2,6 @@
   display: flex;
   height: 100%;
 }
-
-
 .file-structure{
   width:20%;
   background: lightgray;
@@ -12,18 +10,16 @@
 .main-area {
   background: whitesmoke;
   flex: 1;
-  .list-inline{ margin: 0}
-  .commands{
-    height: 30px;
-    line-height: 30px;
-    background-color: cornsilk;
-  }
-  .add-content{
-
-  }
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
 }
 .details{
   display: none;
   width:20%;
   background: lightgray;
 }
+
+@import "file-structure";
+@import "main-area";
+@import "details";

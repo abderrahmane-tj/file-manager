@@ -1,0 +1,34 @@
+.main-area{
+  .list-inline{ margin: 0}
+  .commands{
+    height: 30px;
+    line-height: 30px;
+    background-color: cornsilk;
+  }
+  .folder-content{
+    flex: 1;
+  }
+  .add-content{
+
+  }
+  .content-wrapper{
+    height: 100%;
+    overflow: hidden;
+    &:after{
+      content:" ";
+      clear: both;
+    }
+  }
+  .item{
+    display: block;
+    width: 120px;
+    height: 140px;
+    float: left;
+  }
+  .item-icon img{
+    width: 100%;
+  }
+  .item-name{
+    text-align: center;
+  }
+}

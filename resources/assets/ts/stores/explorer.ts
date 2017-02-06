@@ -2,7 +2,9 @@ import {Http} from "../helpers/http";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 export class Explorer {
   public path$ = new BehaviorSubject("");
+  public folder$ = new BehaviorSubject({id:null,folders:[],files:[]});
   public folderId$ = new BehaviorSubject(null);
+  public structure$ = new BehaviorSubject({id:null, name: "/", folders:[]});
 
   // get folder contents
   getPathContent(path:string){
