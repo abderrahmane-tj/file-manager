@@ -19,7 +19,7 @@ export class LinkToItem extends React.Component<props,state>{
   onClick(e){
     e.preventDefault();
     explorer
-      .getItem(this.props.to)
+      .getContents(this.props.to)
       .subscribe(data=>{
         browserHistory.push(this.props.to)
       },error=>{

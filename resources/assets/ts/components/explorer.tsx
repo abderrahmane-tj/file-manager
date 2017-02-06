@@ -3,19 +3,19 @@ import {browserHistory,Link} from "react-router";
 import {explorer} from "../stores/explorer"
 import {LinkToItem} from "./link-to-item";
 import {BASE_URL, CSRF_TOKEN} from "../helpers/constants";
-import {makeArray} from "../helpers/functions";
+import {makeArray, buildPath} from "../helpers/functions";
 
-interface state{ path? }
+interface state{ path?, contents? }
 interface props{ params: {}, location: {pathname:string} }
 export class Explorer extends React.Component<props,state>{
   constructor(props){
     super(props);
     this.state = {
-      path: ""
+      path: "",
+      contents: {folders : [], files: []}
     };
   }
   componentDidMount(){
-    explorer.getItem('/').subscribe((r)=>console.log(r));
     this.handlePath(this.props.location.pathname);
   }
   componentWillReceiveProps(props:props){
@@ -24,9 +24,12 @@ export class Explorer extends React.Component<props,state>{
   handlePath(path){
     path = decodeURI(path);
     this.setState({path:path});
+    explorer.getContents(path).subscribe((contents)=>{
+      this.setState({contents});
+    });
   }
   render(){
-    const {path} = this.state;
+    const {path, contents} = this.state;
     return (
 <div id="explorer" className="explorer">
   <aside className="file-structure">
@@ -52,12 +55,18 @@ export class Explorer extends React.Component<props,state>{
       </ul>
     </nav>
     <section className="folder-content">
-      <pre>{path}</pre>
       <ul>
-        <li>Folder 11</li>
-        <li>Folder 12</li>
-        <li>Folder 13</li>
+        {contents.folders.map(folder=><li key={folder.id}>
+          <LinkToItem
+            to={buildPath(path,folder.name)}
+            title={folder.name}
+          >{folder.name}</LinkToItem>
+        </li>)}
+        {contents.files.map(file=><li key={file.id}>
+          {file.name}
+        </li>)}
       </ul>
+
       <form
         action={BASE_URL+'upload'}
         method="POST" acceptCharset="UTF-8" encType="multipart/form-data"

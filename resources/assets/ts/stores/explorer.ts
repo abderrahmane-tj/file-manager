@@ -3,6 +3,10 @@ import {BehaviorSubject} from "rxjs/BehaviorSubject";
 export class Explorer {
   public path$ = new BehaviorSubject({});
 
+  // get folder contents
+  getContents(path:string){
+    return Http.get(`/folder${path}`);
+  }
   getItem(path:string, children = true){
     let prefix = "/" + (children ? "folder" : "");
     return Http.get(`${prefix}${path}`);
