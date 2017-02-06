@@ -16,17 +16,15 @@ class CreateFilesTable extends Migration
     Schema::create('files', function (Blueprint $table) {
       $table->increments('id');
       $table->string('name');
-      $table->unsignedInteger('p_id');
+      $table->string('filename');
+      $table->string('mimetype');
+
+      $table->unsignedInteger('folder_id')->nullable();
       $table->timestamps();
 
-      $table->unique(['p_id','name']);
-      $table->foreign('p_id')->references('id')->on('files');
+//      $table->unique(['folder_id','name']);
+      $table->foreign('folder_id')->references('id')->on('folders');
     });
-
-    Schema::table('files',function(Blueprint $table){
-//          $table->foreign('p_id')->references('id')->on('files');
-    });
-
   }
 
   /**

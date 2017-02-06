@@ -1,0 +1,29 @@
+.explorer{
+  display: flex;
+  height: 100%;
+}
+
+
+.file-structure{
+  width:20%;
+  background: lightgray;
+  overflow: scroll;
+}
+.main-area {
+  background: whitesmoke;
+  flex: 1;
+  .list-inline{ margin: 0}
+  .commands{
+    height: 30px;
+    line-height: 30px;
+    background-color: cornsilk;
+  }
+  .add-content{
+
+  }
+}
+.details{
+  display: none;
+  width:20%;
+  background: lightgray;
+}

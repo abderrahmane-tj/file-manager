@@ -7,13 +7,14 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>File Manager</title>
   <link rel="stylesheet" href="{{ url('/') }}/css/app.css">
+  <meta name="csrf-token" content="{{csrf_token()}}"/>
 </head>
 <body>
-<div id="root"></div>
-@if(env('APP_ENV') === 'local')
+<div id="root" class="root"></div>
 <script>
-  var LARAVEL_BASE_URL = "{{ url('/') }}/";
+  var __LARAVEL_VARS = {!! $__LARAVEL_VARS !!};
 </script>
+@if(env('APP_ENV') === 'local')
 <script src="{{ url('/') }}/js/system.js"></script>
 <script>System.import('app').catch(function(err){ console.error(err); });</script>
 @else

@@ -11,6 +11,13 @@
 |
 */
 
+
+Route::post('/upload','FilesController@upload');
+
 Route::get('/{path}', function () {
-    return view('home');
+  $csrf_token = csrf_token();
+  $base_url = url('/').'/';
+  return view('home',
+    ['__LARAVEL_VARS' => json_encode(compact('csrf_token','base_url'))]
+  );
 })->where(['path'=>'.*']);

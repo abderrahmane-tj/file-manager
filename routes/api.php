@@ -16,3 +16,10 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('/folder/{path?}', 'FoldersController@contents')
+  ->where(['path'=>'.*']);
+
+Route::get('/file/{path}', function($path){
+  return ["looking for item"];
+})->where(['path'=>'.*']);

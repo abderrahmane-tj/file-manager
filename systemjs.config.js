@@ -1,7 +1,7 @@
 (function (global) {
   var LARAVEL_BASE_URL = "public/";
   if(typeof window !== 'undefined'){
-    LARAVEL_BASE_URL = window['LARAVEL_BASE_URL'];
+    LARAVEL_BASE_URL = window['__LARAVEL_VARS'].base_url;
   }
 
   System.config({
