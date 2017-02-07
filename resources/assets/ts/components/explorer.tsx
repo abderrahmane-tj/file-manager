@@ -4,7 +4,7 @@ import * as Dropzone from "react-dropzone";
 import * as request from 'superagent';
 import {explorer} from "../stores/explorer"
 import {LinkToItem} from "./link-to-item";
-import {BASE_URL, CSRF_TOKEN} from "../helpers/constants";
+import {BASE_URL, CSRF_TOKEN, BASE_FOLDER} from "../helpers/constants";
 import {
   makeArray, buildPath, getIdFromPath,
   travelStructure, toggleClass
@@ -80,7 +80,11 @@ export class Explorer extends React.Component<props,state>{
     }
   }
   getPath(props=this.props){
-    return decodeURI(props.location.pathname);
+    let path = props.location.pathname;
+    if(path.startsWith(BASE_FOLDER)){
+      path = path.substr(BASE_FOLDER.length);
+    }
+    return decodeURI(path);
   }
   getInitialFoldersFromPath(){
     let path = this.getPath();
