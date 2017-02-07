@@ -8,11 +8,19 @@ const headers = {
   Accept: 'application/json',
   'X-CSRF-TOKEN': document.querySelector('[name=csrf-token]').getAttribute('content')
 };
+
+
 export class Http {
-  static API_URL = BASE_URL+'api';
+  static baseString = BASE_URL.replace(window.location.origin,"");
+  static BASE_FOLDER = Http.baseString.substr(0,Http.baseString.length-1);
+  static API_URL = Http.BASE_FOLDER+'/api';
+
   static HEADERS = {Accept: 'application/json'};
 
   static get(path: string, params = {}){
+    if(path.endsWith("/")){
+      path = path.substr(0,path.length-1);
+    }
     return ajax({
       url: Http.API_URL + path,
       method: 'GET',

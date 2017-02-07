@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use App\File;
 
 class FilesController extends Controller{
-  public function upload(FileRequest $request, Folders $folders,$id=null){
+  public function upload(Request $request, Folders $folders,$id=null){
 
     $folder_id = $id == null ? null : Folder::findOrFail($id)->id;
     $uploadedFiles = [];

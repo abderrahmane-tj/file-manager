@@ -24,7 +24,7 @@ class FoldersRequest extends FormRequest
     public function rules()
     {
       return [
-        "id"=>"integer",
+//        "id"=>"integer",
         "name"=>"string|required"
       ];
     }

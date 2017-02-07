@@ -19,7 +19,7 @@ class CreateFilesTable extends Migration
       $table->string('filename');
       $table->string('mimetype');
 
-      $table->unsignedInteger('folder_id')->nullable();
+      $table->integer('folder_id')->nullable()->unsigned();
       $table->timestamps();
 
 //      $table->unique(['folder_id','name']);

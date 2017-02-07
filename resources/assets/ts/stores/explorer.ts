@@ -20,7 +20,11 @@ export class Explorer {
     return Http.get(`${prefix}${path}`);
   }
   addItem(name,id){
-    return Http.post(`/folder`,{name,id});
+    let fields = {name};
+    if(id!==null){
+      fields['id']=id;
+    }
+    return Http.post(`/folder`,fields);
   }
   uploadItem(formData,id){
     return Http.post(`/upload/test`,{formData,id});

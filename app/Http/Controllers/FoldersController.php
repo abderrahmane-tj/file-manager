@@ -14,7 +14,7 @@ class FoldersController extends Controller
   public function contentsFromPath(Folders $folders, $path="/"){
     return $folders->pathContent($path);
   }
-  public function store(FoldersRequest $request, Folders $folders){
+  public function store(Request $request, Folders $folders){
     $id = $request->input('id');
     $name = $request->input('name');
     return $folders->createFolder($id, $name);

@@ -4,7 +4,7 @@ import * as Dropzone from "react-dropzone";
 import * as request from 'superagent';
 import {explorer} from "../stores/explorer"
 import {LinkToItem} from "./link-to-item";
-import {BASE_URL, CSRF_TOKEN, BASE_FOLDER} from "../helpers/constants";
+import {BASE_URL, CSRF_TOKEN} from "../helpers/constants";
 import {
   makeArray, buildPath, getIdFromPath,
   travelStructure, toggleClass
@@ -80,6 +80,8 @@ export class Explorer extends React.Component<props,state>{
     }
   }
   getPath(props=this.props){
+    let baseString = BASE_URL.replace(window.location.origin,"");
+    let BASE_FOLDER = baseString.substr(0,baseString.length-1);
     let path = props.location.pathname;
     if(path.startsWith(BASE_FOLDER)){
       path = path.substr(BASE_FOLDER.length);
@@ -167,7 +169,13 @@ export class Explorer extends React.Component<props,state>{
   onDrop(acceptedFiles, rejectedFiles) {
     let formData: FormData = new FormData();
     let id = explorer.folderId$.getValue() || "";
-    let req = request.post(`/api/upload/${id}`)
+    let baseString = BASE_URL.replace(window.location.origin,"");
+    let BASE_FOLDER = baseString.substr(0,baseString.length-1);
+    let suffix = "";
+    if(id!==null){
+      suffix = `/${id}`;
+    }
+    let req = request.post(`${BASE_FOLDER}/api/upload${suffix}`)
       .set('X-CSRF-TOKEN', CSRF_TOKEN);
     acceptedFiles.forEach(f=>{
       req.attach('files[]',f);
