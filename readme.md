@@ -20,7 +20,7 @@ $ gulp lazy-copy
 $ gulp
 ````
 
-To build the production verion, specify `APP_ENV=development` and then run
+To build the production version, specify `APP_ENV=production` and then run
 ````
 $ gulp production
 ````
