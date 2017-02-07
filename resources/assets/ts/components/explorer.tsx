@@ -1,20 +1,25 @@
 import * as React from "react";
+import * as ReactDOM from "react-dom";
 import {browserHistory,Link} from "react-router";
 import {explorer} from "../stores/explorer"
 import {LinkToItem} from "./link-to-item";
 import {BASE_URL, CSRF_TOKEN} from "../helpers/constants";
 import {
   makeArray, buildPath, getIdFromPath,
-  travelStructure
+  travelStructure, toggleClass
 } from "../helpers/functions";
 import {Subscription} from "rxjs/Subscription";
 import {Structure} from "./file-structure";
 
-interface state{ path?, id?, currentfolder?, structure?}
+
+interface state{
+  path?, id?, currentfolder?, structure?
+}
 interface props{ params: {}, location: {pathname:string} }
 export class Explorer extends React.Component<props,state>{
   subscriptions: Subscription[] = [];
   fullyMounted = false;
+  createFolderInput = null;
   constructor(props){
     super(props);
     this.state = {
@@ -22,6 +27,9 @@ export class Explorer extends React.Component<props,state>{
       currentfolder: {id: null,folders : [], files: []},
       structure: {id: null, name: "/", folders:[]}
     };
+    this.toggleNewFolderInput=this.toggleNewFolderInput.bind(this);
+    this.startUpload=this.startUpload.bind(this);
+    this.createFolder=this.createFolder.bind(this);
   }
   componentDidMount(){
     let pathSub = explorer.path$.subscribe((path)=>{
@@ -44,7 +52,6 @@ export class Explorer extends React.Component<props,state>{
     this.subscriptions.push(...[
       pathSub, folderSub, structureSub, folderIdSub
     ]);
-
     this.getInitialFoldersFromPath();
   }
   componentWillUnmount(){
@@ -84,16 +91,20 @@ export class Explorer extends React.Component<props,state>{
       this.updateStructure(folder);
     });
   }
-  updateStructure(folder){
-    let path = this.getPath();
+  updateStructure(folder, path = this.getPath(), asChild = false){
     let pathParts = path.split("/").filter(x=>x!=="");
     let structureClone = {...explorer.structure$.getValue()};
     let currentInStructure = travelStructure(structureClone,pathParts);
-    if(!currentInStructure.files){
-      currentInStructure.files = folder.files;
-    }
-    if(!currentInStructure.folders){
-      currentInStructure.folders = folder.folders;
+    if(asChild){
+      currentInStructure.folders.push(folder);
+    }else{
+      // todo : compare children and add new ones
+      if(!currentInStructure.files){
+        currentInStructure.files = folder.files;
+      }
+      if(!currentInStructure.folders){
+        currentInStructure.folders = folder.folders;
+      }
     }
     explorer.structure$.next(structureClone);
   }
@@ -122,20 +133,51 @@ export class Explorer extends React.Component<props,state>{
     explorer.folder$.next(last);
     explorer.structure$.next(structure);
     this.fullyMounted = true;
+    ReactDOM.findDOMNode(this).classList.remove('hidden');
+  }
+  toggleNewFolderInput(e){
+    e.preventDefault();
+    toggleClass(this.createFolderInput,'hidden');
+  }
+  createFolder(e){
+    e.preventDefault();
+    if(e.keyCode === 13 && e.target.value.trim().length > 0){
+      let value = this.createFolderInput.value;
+      this.createFolderInput.classList.add('hidden');
+      this.createFolderInput.value = '';
+      explorer
+        .addItem(value,explorer.folder$.getValue().id)
+        .subscribe(folder=>{
+           this.updateStructure(folder,this.getPath(),true);
+        });
+    }
+  }
+  startUpload(e){
+    e.preventDefault();
+    console.log(event);
   }
 
   render(){
     const {path, currentfolder, structure} = this.state;
     return (
-<div id="explorer" className="explorer">
+<div id="explorer" className="explorer hidden">
   <aside className="file-structure">
     <Structure structure={structure}/>
   </aside>
   <main className="main-area">
     <nav className="commands">
-      <ul className="add-content list-inline">
-        <li className="new-folder">New Folder</li>
-        <li className="upload-file">Upload File</li>
+      <ul className="add-content list-inline pull-right">
+        <input type="text" placeholder="New Folder"
+               id="create-folder-input" className="create-new-folder hidden"
+               onKeyUp={this.createFolder}
+               ref={(input)=>{this.createFolderInput = input}}
+        />
+        <li className="new-folder">
+          <a href="#" onClick={this.toggleNewFolderInput}>New Folder</a>
+        </li>
+        <li className="upload-file">
+          <a href="#" onClick={this.toggleNewFolderInput}>Upload Folder</a>
+        </li>
       </ul>
     </nav>
     <section className="folder-content">

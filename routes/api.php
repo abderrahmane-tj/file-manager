@@ -25,3 +25,7 @@ Route::get('/folder-from-path/{path?}', 'FoldersController@contentsFromPath')
 
 // get file details
 Route::get('/file/{id}', 'FilesController@details');
+
+
+// create new foloder
+Route::post('/folder', 'FoldersController@store');

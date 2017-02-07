@@ -23,3 +23,12 @@ export function travelStructure(node,path){
   let [head,...tail] = path;
   return travelStructure(node.folders.find(folder=>folder.name===head),tail);
 }
+
+export function toggleClass(element, className){
+  let hasIt = element.classList.contains(className);
+  if(hasIt){
+    element.classList.remove(className);
+  }else{
+    element.classList.add(className);
+  }
+}

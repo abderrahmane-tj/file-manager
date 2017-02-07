@@ -71,4 +71,7 @@ class Folders{
     $id = null;
     return compact('id','folders', 'files');
   }
+  public function createFolder($folder_id, $name){
+    return Folder::create(compact('name','folder_id'));
+  }
 }

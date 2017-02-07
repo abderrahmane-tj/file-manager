@@ -19,8 +19,8 @@ export class Explorer {
     let prefix = "/" + (children ? "folder" : "");
     return Http.get(`${prefix}${path}`);
   }
-  addItem(item){
-    return Http.post(`/${item.path}`,item);
+  addItem(name,id){
+    return Http.post(`/folder`,{name,id});
   }
   updateItem(item){
     return Http.put(`/${item.path}`,item);
