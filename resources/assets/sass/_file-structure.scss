@@ -5,11 +5,11 @@
     padding-left: 24px;
     background: url(../images/structure-folder.png) no-repeat top left;
     &:hover{
-      background-color: #e5f3ff;
+      background-color: $hoverColor;
     }
     &.active{
-      background-color: #cce8ff;
-      outline: 1px solid #99d1ff;
+      background-color: $activeColor;
+      outline: 1px solid $activeAccent;
     }
   }
   ul {

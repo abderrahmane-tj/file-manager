@@ -30,6 +30,13 @@
     width: 120px;
     height: 140px;
     float: left;
+    &:hover{
+      background-color: $hoverColor;
+    }
+    &:active{
+      background-color: $activeColor;
+      outline: 1px solid $activeAccent;
+    }
   }
   .item-icon img{
     width: 100%;
