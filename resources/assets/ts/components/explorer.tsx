@@ -4,15 +4,13 @@ import * as Dropzone from "react-dropzone";
 import * as request from 'superagent';
 import {explorer} from "../stores/explorer"
 import {LinkToItem} from "./link-to-item";
-import {BASE_URL, CSRF_TOKEN} from "../helpers/constants";
+import {BASE_URL, CSRF_TOKEN, BASE_FOLDER} from "../helpers/constants";
 import {
   makeArray, buildPath, getIdFromPath,
-  travelStructure, toggleClass
+  travelStructure, toggleClass, removeBaseFolder
 } from "../helpers/functions";
 import {Subscription} from "rxjs/Subscription";
 import {Structure} from "./file-structure";
-
-
 interface state{
   path?, id?, currentfolder?, structure?
 }
@@ -25,9 +23,9 @@ export class Explorer extends React.Component<props,state>{
   constructor(props){
     super(props);
     this.state = {
-      path: "",
+      path: BASE_FOLDER,
       currentfolder: {id: null,folders : [], files: []},
-      structure: {id: null, name: "/", folders:[]}
+      structure: {id: null, name: BASE_FOLDER, folders:[]}
     };
     this.toggleNewFolderInput=this.toggleNewFolderInput.bind(this);
     this.startUpload=this.startUpload.bind(this);
@@ -37,20 +35,16 @@ export class Explorer extends React.Component<props,state>{
   }
   componentDidMount(){
     let pathSub = explorer.path$.subscribe((path)=>{
-      console.log('new path ==> ',path);
       this.setState({path});
     });
     let folderSub = explorer.folder$.subscribe((folder)=>{
-      console.log('new folder ==> ',folder);
       this.setState({currentfolder:folder});
     });
     let folderIdSub = explorer.folderId$.subscribe((id)=>{
-      console.log('new folderId ==> ',id);
       if(!this.fullyMounted){return;}
       this.getContent(id);
     });
     let structureSub = explorer.structure$.subscribe((structure)=>{
-      console.log('new structure ==>',structure);
       this.setState({structure});
     });
     this.subscriptions.push(...[
@@ -64,28 +58,21 @@ export class Explorer extends React.Component<props,state>{
 
   componentWillReceiveProps(props:props){
     let path = this.getPath(props);
-    let pathParts = path.split("/").filter(x=>x!=="");
+    let pathParts = removeBaseFolder(path).split("/").filter(x=>x!=="");
     let id = null;
     if(pathParts.length){
       id = getIdFromPath(explorer.structure$.getValue(),pathParts);
     }
 
     if(path !== explorer.path$.getValue()){
-      console.log('path updating');
       explorer.path$.next(path);
     }
     if(id !== explorer.folderId$.getValue()){
-      console.log('id change');
       explorer.folderId$.next(id);
     }
   }
   getPath(props=this.props){
-    let baseString = BASE_URL.replace(window.location.origin,"");
-    let BASE_FOLDER = baseString.substr(0,baseString.length-1);
     let path = props.location.pathname;
-    if(path.startsWith(BASE_FOLDER)){
-      path = path.substr(BASE_FOLDER.length);
-    }
     return decodeURI(path);
   }
   getInitialFoldersFromPath(){
@@ -102,10 +89,15 @@ export class Explorer extends React.Component<props,state>{
     });
   }
   updateStructure(folder, path = this.getPath(), asChild = false){
+    path = removeBaseFolder(path,false);
     let pathParts = path.split("/").filter(x=>x!=="");
     let structureClone = {...explorer.structure$.getValue()};
     let currentInStructure = travelStructure(structureClone,pathParts);
+
     if(asChild){
+      if(!currentInStructure.folders){
+        currentInStructure.folders = [];
+      }
       currentInStructure.folders.push(folder);
     }else{
       // todo : compare children and add new ones
@@ -158,27 +150,26 @@ export class Explorer extends React.Component<props,state>{
       explorer
         .addItem(value,explorer.folder$.getValue().id)
         .subscribe(folder=>{
-           this.updateStructure(folder,this.getPath(),true);
+          this.updateStructure(folder,this.getPath(),true);
         });
     }
   }
   startUpload(e){
     e.preventDefault();
-    console.log(event);
   }
   onDrop(acceptedFiles, rejectedFiles) {
     let formData: FormData = new FormData();
     let id = explorer.folderId$.getValue() || "";
-    let baseString = BASE_URL.replace(window.location.origin,"");
-    let BASE_FOLDER = baseString.substr(0,baseString.length-1);
-    let suffix = "";
-    if(id!==null){
-      suffix = `/${id}`;
+
+
+
+    let req = request.post(`${window.location.origin+BASE_FOLDER}upload`);
+    req = req.set('X-CSRF-TOKEN', CSRF_TOKEN);
+    if(id!== null){
+      req = req.field('id',id);
     }
-    let req = request.post(`${BASE_FOLDER}/api/upload${suffix}`)
-      .set('X-CSRF-TOKEN', CSRF_TOKEN);
     acceptedFiles.forEach(f=>{
-      req.attach('files[]',f);
+      req = req.attach('files[]',f);
     });
     req.on('error', ()=>{console.log("upload on error")})
     .end(function(err, res){
@@ -196,6 +187,7 @@ export class Explorer extends React.Component<props,state>{
 
   }
   onMainDropZoneclick(e){
+    e.preventDefault();
     if(e.target.classList.contains('open-drop-zone')){
       this.dropzone.open();
     }
@@ -256,19 +248,8 @@ export class Explorer extends React.Component<props,state>{
           </div>)}
         </div>
       </Dropzone>
-    <div className="temp-upload hidden">
-      <form
-        action={BASE_URL+'upload/'+(currentfolder.id!==null?currentfolder.id:"")}
-        method="POST" acceptCharset="UTF-8" encType="multipart/form-data"
-      >
-        <input id="upload_to_current" type="file" name="item"/>
-        <input className="current_hidden_token" name="_token" type="hidden"
-               value={CSRF_TOKEN} />
-        <input type="submit" value={"Submit"}/>
-      </form>
-    </div>
     </section>
-    <pre className="debug-area hidden">{path}</pre>
+    <pre className="debug-area hidden">{explorer.path$.getValue()}</pre>
   </main>
   <aside className="details">
 

@@ -9,9 +9,10 @@ use Illuminate\Http\Request;
 use App\File;
 
 class FilesController extends Controller{
-  public function upload(Request $request, Folders $folders,$id=null){
+  public function upload(Request $request, Folders $folders){
+    $id = $request->input('id');
 
-    $folder_id = $id == null ? null : Folder::findOrFail($id)->id;
+    $folder_id = is_null($id) ? null : Folder::findOrFail($id)->id;
     $uploadedFiles = [];
     foreach($request->file("files") as $file) {
       $name = $file->getClientOriginalName();

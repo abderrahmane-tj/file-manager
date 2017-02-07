@@ -1,8 +1,10 @@
+import {BASE_FOLDER} from "./constants";
 export function makeArray(element){
   return Array.prototype.slice.call(element);
 }
 export function buildPath(path,name){
-  if(path === "/"){
+
+  if(path === BASE_FOLDER){
     return path+name;
   }
   return path+"/"+name;
@@ -31,4 +33,9 @@ export function toggleClass(element, className){
   }else{
     element.classList.add(className);
   }
+}
+
+export function removeBaseFolder(path,full=true){
+  let backUp = full ? 0 : 1;
+  return path.substr(BASE_FOLDER.length-backUp);
 }

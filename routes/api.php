@@ -29,6 +29,3 @@ Route::get('/file/{id}', 'FilesController@details');
 
 // create new foloder
 Route::post('/folder', 'FoldersController@store');
-
-
-Route::post('/upload/{id?}','FilesController@upload');

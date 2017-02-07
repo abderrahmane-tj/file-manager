@@ -135,6 +135,9 @@ gulp.task('bundle-ts', function(cb) {
     .then(function() { console.log('Build complete'); livereload.reload(); cb(); })
     .catch(function(err) { console.log('Build error'); console.log(err);});
 });
+gulp.task('production',function(cb){
+  runSequence('lazy-copy','build','bundle-ts',cb);
+});
 ////////////////////////
 function swallowError (error) {
   console.log(error.toString());

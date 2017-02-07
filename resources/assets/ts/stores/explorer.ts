@@ -1,14 +1,17 @@
 import {Http} from "../helpers/http";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
+import {BASE_FOLDER} from "../helpers/constants";
+import {removeBaseFolder} from "../helpers/functions";
 export class Explorer {
-  public path$ = new BehaviorSubject("");
+  public path$ = new BehaviorSubject(BASE_FOLDER);
   public folder$ = new BehaviorSubject({id:null,folders:[],files:[]});
   public folderId$ = new BehaviorSubject(null);
-  public structure$ = new BehaviorSubject({id:null, name: "/", folders:[]});
+  public structure$ = new BehaviorSubject({id:null, name: BASE_FOLDER, folders:[]});
 
   // get folder contents
   getPathContent(path:string){
-    return Http.get(`/folder-from-path${path}`);
+    path = removeBaseFolder(path);
+    return Http.get(`/folder-from-path/${path}`);
   }
   getContent(id:number){
     let path = '/folder/';
