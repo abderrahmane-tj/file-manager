@@ -14,8 +14,7 @@ export class LinkToItem extends React.Component<props,state>{
     };
     this.onClick = this.onClick.bind(this);
   }
-  componentDidMount(){
-  }
+  componentDidMount(){}
   onClick(e){
     e.preventDefault();
     browserHistory.push(this.props.to);
@@ -25,9 +24,12 @@ export class LinkToItem extends React.Component<props,state>{
   }
   render(){
     const {to,children,title,className} = this.props;
+    let isActive = browserHistory.getCurrentLocation().pathname === to;
+    let c = className ? className : "";
+    c += isActive ? " active":"";
     return <a
       href={to} onClick={this.onClick} title={title}
-      className={className}
+      className={c}
     >{children}</a>
   }
 }

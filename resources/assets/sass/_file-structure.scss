@@ -1,4 +1,17 @@
 .file-structure{
+  padding: 10px;
+  a {
+    display: block;
+    padding-left: 24px;
+    background: url(../images/structure-folder.png) no-repeat top left;
+    &:hover{
+      background-color: #e5f3ff;
+    }
+    &.active{
+      background-color: #cce8ff;
+      outline: 1px solid #99d1ff;
+    }
+  }
   ul {
     list-style-type: none;
     margin: 0;
@@ -6,13 +19,15 @@
   }
   li{
     line-height: 20px;
-    padding-left: 24px;
-    background: url(../images/structure-folder.png) top left no-repeat;
+    margin-left: 24px;
     &:not(:first-child){
       margin-top: 5px;
     }
     &:first-child ul{
       margin-top: 5px;
     }
+  }
+  &>ul>li{
+    margin-left: 0px;
   }
 }
