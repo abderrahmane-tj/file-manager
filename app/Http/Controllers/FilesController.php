@@ -10,17 +10,20 @@ use App\File;
 
 class FilesController extends Controller{
   public function upload(FileRequest $request, Folders $folders,$id=null){
+
     $folder_id = $id == null ? null : Folder::findOrFail($id)->id;
+    $uploadedFiles = [];
+    foreach($request->file("files") as $file) {
+      $name = $file->getClientOriginalName();
+      $mimetype = $file->getMimeType();
+      $filename = $file->store('items');
+      $uploaded = File::create(compact('name','filename','mimetype','folder_id'));
+      array_push($uploadedFiles,$uploaded);
+    }
 
-    $file = $request->file('item');
-    $name = $file->getClientOriginalName();
-    $mimetype = $file->getMimeType();
-    $filename = $request->file('item')->store('items');
-
-    $file = File::create(compact('name','filename','mimetype','folder_id'));
-
-    return redirect('/');
+    return $uploadedFiles;
   }
+
   public function details($path, Folders $folders){
     $parts = explode("/",$path);
     return $parts;

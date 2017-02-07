@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import {browserHistory,Link} from "react-router";
+import * as Dropzone from "react-dropzone";
+import * as request from 'superagent';
 import {explorer} from "../stores/explorer"
 import {LinkToItem} from "./link-to-item";
 import {BASE_URL, CSRF_TOKEN} from "../helpers/constants";
@@ -20,6 +21,7 @@ export class Explorer extends React.Component<props,state>{
   subscriptions: Subscription[] = [];
   fullyMounted = false;
   createFolderInput = null;
+  private dropzone;
   constructor(props){
     super(props);
     this.state = {
@@ -30,6 +32,8 @@ export class Explorer extends React.Component<props,state>{
     this.toggleNewFolderInput=this.toggleNewFolderInput.bind(this);
     this.startUpload=this.startUpload.bind(this);
     this.createFolder=this.createFolder.bind(this);
+    this.onDrop=this.onDrop.bind(this);
+    this.onMainDropZoneclick=this.onMainDropZoneclick.bind(this);
   }
   componentDidMount(){
     let pathSub = explorer.path$.subscribe((path)=>{
@@ -156,7 +160,34 @@ export class Explorer extends React.Component<props,state>{
     e.preventDefault();
     console.log(event);
   }
+  onDrop(acceptedFiles, rejectedFiles) {
+    let formData: FormData = new FormData();
+    let id = explorer.folderId$.getValue() || "";
+    let req = request.post(`/api/upload/${id}`)
+      .set('X-CSRF-TOKEN', CSRF_TOKEN);
+    acceptedFiles.forEach(f=>{
+      req.attach('files[]',f);
+    });
+    req.on('error', ()=>{console.log("upload on error")})
+    .end(function(err, res){
+      if(err){
+        console.log(err);
+        return;
+      }
+      let cloneFolder = {...explorer.folder$.getValue()};
+      if(!cloneFolder.files){
+        cloneFolder.files = [];
+      }
+      res.body.forEach(f=>cloneFolder.files.push(f));
+      explorer.folder$.next(cloneFolder);
+    });
 
+  }
+  onMainDropZoneclick(e){
+    if(e.target.classList.contains('open-drop-zone')){
+      this.dropzone.open();
+    }
+  }
   render(){
     const {path, currentfolder, structure} = this.state;
     return (
@@ -176,37 +207,44 @@ export class Explorer extends React.Component<props,state>{
           <a href="#" onClick={this.toggleNewFolderInput}>New Folder</a>
         </li>
         <li className="upload-file">
-          <a href="#" onClick={this.toggleNewFolderInput}>Upload Folder</a>
+          <a href="#" className="open-drop-zone"
+             onClick={this.onMainDropZoneclick}>Upload File</a>
         </li>
       </ul>
     </nav>
     <section className="folder-content">
-      <pre>{path}</pre>
-    <div className="content-wrapper">
-      {currentfolder.folders.map(folder=><LinkToItem
-        key={folder.id}
-        to={buildPath(path,folder.name)}
-        title={folder.name}
-        id={folder.id}
-        className="item folder"
+      <Dropzone
+        onDrop={this.onDrop} disableClick={true}
+        ref={(node) => { this.dropzone = node; }}
+        className={"dropzone"}
+        activeClassName={"active"}
       >
-        <div className="item-icon">
-          <img src={BASE_URL+'images/folder-full.png'} alt="Folder"/>
+        <div className="content-wrapper open-drop-zone" onClick={this.onMainDropZoneclick}>
+          {currentfolder.folders.map(folder=><LinkToItem
+            key={folder.id}
+            to={buildPath(path,folder.name)}
+            title={folder.name}
+            id={folder.id}
+            className="item folder"
+          >
+            <div className="item-icon">
+              <img src={BASE_URL+'images/folder-full.png'} alt="Folder"/>
+            </div>
+            <div className="item-name">
+              <p>{folder.name}</p>
+            </div>
+          </LinkToItem>)}
+          {currentfolder.files.map(file=><div className="item file" key={file.id}>
+            <div className="item-icon">
+              <img src={BASE_URL+'images/file.png'} alt="File"/>
+            </div>
+            <div className="item-name">
+              <p>{file.name}</p>
+            </div>
+          </div>)}
         </div>
-        <div className="item-name">
-          <p>{folder.name}</p>
-        </div>
-      </LinkToItem>)}
-      {currentfolder.files.map(file=><div className="item file" key={file.id}>
-        <div className="item-icon">
-          <img src={BASE_URL+'images/file.png'} alt="File"/>
-        </div>
-        <div className="item-name">
-          <p>{file.name}</p>
-        </div>
-      </div>)}
-    </div>
-    <div className="temp-upload">
+      </Dropzone>
+    <div className="temp-upload hidden">
       <form
         action={BASE_URL+'upload/'+(currentfolder.id!==null?currentfolder.id:"")}
         method="POST" acceptCharset="UTF-8" encType="multipart/form-data"
@@ -218,6 +256,7 @@ export class Explorer extends React.Component<props,state>{
       </form>
     </div>
     </section>
+    <pre className="debug-area hidden">{path}</pre>
   </main>
   <aside className="details">
 

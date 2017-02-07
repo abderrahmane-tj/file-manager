@@ -7,6 +7,14 @@
   }
   .folder-content{
     flex: 1;
+    position: relative;
+    .dropzone{
+      //position: absolute;
+      height: 100%;
+      &.active{
+        background: rgba(94, 223, 176, 0.16);
+      }
+    }
   }
   .add-content{
 
@@ -20,6 +28,7 @@
   .content-wrapper{
     height: 100%;
     overflow: hidden;
+    background: url(../images/content-wrapper.png) bottom right no-repeat;
     &:after{
       content:" ";
       clear: both;
@@ -30,6 +39,7 @@
     width: 120px;
     height: 140px;
     float: left;
+    position: relative;
     &:hover{
       background-color: $hoverColor;
     }
@@ -43,5 +53,8 @@
   }
   .item-name{
     text-align: center;
+  }
+  .debug-area{
+    height: 70px;
   }
 }

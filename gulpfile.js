@@ -111,8 +111,10 @@ gulp.task('copy-node-modules',function () {
     "classnames",
     "rxjs",
     "react-router",
+    "react-dropzone",
     "react-dom",
     "react",
+    "superagent",
   ].map(folder=>`./node_modules/${folder}/**/*`);
   return gulp.src(folders,{base:'./node_modules/'})
     .pipe(gulp.dest("public/node_modules"))

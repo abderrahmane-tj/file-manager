@@ -13,7 +13,9 @@
       react: 'npm:react/dist',
       'react-dom':'npm:react-dom/dist',
       'react-router':'npm:react-router/umd/ReactRouter.min.js',
+      'react-dropzone':'npm:react-dropzone/dist/index.js',
       rxjs: 'npm:rxjs',
+      superagent: 'npm:superagent',
       classnames: 'npm:classnames',
       moment: 'npm:moment'
     },
@@ -24,7 +26,8 @@
       'react-dom': { main: './react-dom.js', defaultExtension: 'js' },
       rxjs: { defaultExtension: 'js' },
       classnames: { main: './index.js', defaultExtension: 'js' },
-      moment: { main: './moment.js', defaultExtension: 'js' }
+      moment: { main: './moment.js', defaultExtension: 'js' },
+      superagent: { main: './superagent.js', defaultExtension: 'js' }
     }
   });
 })(this);

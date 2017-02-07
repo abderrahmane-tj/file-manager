@@ -12,8 +12,6 @@
 */
 
 
-Route::post('/upload/{id?}','FilesController@upload');
-
 Route::get('/{path}', function () {
   $csrf_token = csrf_token();
   $base_url = url('/').'/';

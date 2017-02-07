@@ -23,9 +23,14 @@ class FileRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-          "id"=>"integer",
-          "item"=>"file|required"
-        ];
+      $rules = [
+        "id"=>"integer"
+      ];
+//      $nbr = count($this->input('files')) - 1;
+//      foreach(range(0, $nbr) as $index) {
+//        $rules['files.' . $index] = 'files|required';
+//      }
+
+      return $rules;
     }
 }

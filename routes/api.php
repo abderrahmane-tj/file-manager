@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Input;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -29,3 +29,6 @@ Route::get('/file/{id}', 'FilesController@details');
 
 // create new foloder
 Route::post('/folder', 'FoldersController@store');
+
+
+Route::post('/upload/{id?}','FilesController@upload');

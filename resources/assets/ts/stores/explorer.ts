@@ -22,6 +22,9 @@ export class Explorer {
   addItem(name,id){
     return Http.post(`/folder`,{name,id});
   }
+  uploadItem(formData,id){
+    return Http.post(`/upload/test`,{formData,id});
+  }
   updateItem(item){
     return Http.put(`/${item.path}`,item);
   }
